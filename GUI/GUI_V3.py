@@ -111,16 +111,16 @@ class GUI:
     def interface(self):
         """界面编写位置"""
         # -------------------------------- LEFT IMAGE ------------------------------- #
-        # self.fr0 = Frame(self.root)
-        # self.fr0.place(x=0, y=0, width=153, height=360)
+        self.fr0 = Frame(self.root)
+        self.fr0.place(x=0, y=0, width=153, height=360)
 
-        # path_Left_Image = "./Image/Left_1200x510.png"
-        # image_Left_Image = Image.open(path_Left_Image).resize((153, 360), Image.Resampling.LANCZOS)
-        # photo_Left_Image = ImageTk.PhotoImage(image_Left_Image)
+        path_Left_Image = "./Image/Left_1200x510.png"
+        image_Left_Image = Image.open(path_Left_Image).resize((153, 360), Image.Resampling.LANCZOS)
+        photo_Left_Image = ImageTk.PhotoImage(image_Left_Image)
 
-        # self.Left_Image = Label(self.fr0, image=photo_Left_Image)
-        # self.Left_Image.image = photo_Left_Image
-        # self.Left_Image.place(x=0, y=0, width=153, height=360)
+        self.Left_Image = Label(self.fr0, image=photo_Left_Image)
+        self.Left_Image.image = photo_Left_Image
+        self.Left_Image.place(x=0, y=0, width=153, height=360)
 
 
         # --------------------------------操作区域(frame_1)------------------------------ #
@@ -233,16 +233,16 @@ class GUI:
         self.coord_label.place(x=250, y=125)
 
         # --------------------------- IMAGE RIGHT(frame_4) --------------------------- #
-        # self.fr4 = Frame(self.root)  # 区域4 容器  relief   groove=凹  ridge=凸
-        # self.fr4.place(x=540+120+180, y=0, width=180, height=360)  # 区域1位置尺寸
+        self.fr4 = Frame(self.root)  # 区域4 容器  relief   groove=凹  ridge=凸
+        self.fr4.place(x=540+120+180, y=0, width=180, height=360)  # 区域1位置尺寸
 
-        # path_Right_Image = "./Image/Right_1200x600.png"
-        # image_Right_Image = Image.open(path_Right_Image).resize((180, 360), Image.Resampling.LANCZOS)
-        # photo_Right_Image = ImageTk.PhotoImage(image_Right_Image)
+        path_Right_Image = "./Image/Right_1200x600.png"
+        image_Right_Image = Image.open(path_Right_Image).resize((180, 360), Image.Resampling.LANCZOS)
+        photo_Right_Image = ImageTk.PhotoImage(image_Right_Image)
 
-        # self.Right_Image = Label(self.fr4, image=photo_Right_Image)
-        # self.Right_Image.image = photo_Right_Image
-        # self.Right_Image.place(x=0, y=0, width=180, height=360)
+        self.Right_Image = Label(self.fr4, image=photo_Right_Image)
+        self.Right_Image.image = photo_Right_Image
+        self.Right_Image.place(x=0, y=0, width=180, height=360)
 
 
 
