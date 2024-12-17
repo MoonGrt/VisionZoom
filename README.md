@@ -331,10 +331,12 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 
 
-<!-- CONTACT -->
-## Contact
+<!-- 联系我们 -->
+## 联系我们
 
 MoonGrt - 1561145394@qq.com
+Deng XinYang -
+Hu JiaXiang -
 Project Link: [MoonGrt/VisionZoom](https://github.com/MoonGrt/VisionZoom)
 
 <p align="right">(<a href="#top">top</a>)</p>
