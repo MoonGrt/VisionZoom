@@ -137,7 +137,7 @@ The overall system block diagram of our video streaming scaler is shown below:
 ![](Document/images/block_diagram.jpg)
 <div style="text-align: center;">Figure 1. Overall Block Diagram of the System</div>
 
-According to the design purpose, our video streaming scaling system needs to achieve three basic requirements: low latency, high picture quality and arbitrary scaling effect. For a complete frame transmission process, the initial image resolution information is $1920^{*}1080$ and $60\mathrm{Hz}$ sent from the PC as the input source to the FPGA through the IIC configuration module. After the communication is established, the pixel information is divided into three 10-bit colour channels through the HDMI input and output. Such input and output requirements require us to add a codec conversion module between the input and output of the 10-bit colour channels and the three 8-bit RGB channels. The eight-bit RGB data obtained through decoding is input into the algorithm module that contains preprocessing and interpolation to complete the image to achieve the scaling function, and finally display the frame on the monitor through HDMI. The data cache part of the system needs to cache three frames of scaled image data, and the DDR3 module we use selects 16-bit input, so before inputting into the cache module, it is necessary to convert the three channels of 24-bit colour data into 16-bit yCbCr format, and carry out the yuv444 to yuv422 conversion to reduce the space required for storing the data, while retaining the good quality of the video pixel points. The space required for storage is reduced while retaining the good quality of the video pixels.
+According to the design purpose, our video streaming scaling system needs to achieve three basic requirements: low latency, high picture quality and arbitrary scaling effect. For a complete frame transmission process, the initial image resolution information is 1920*1080 and $60\mathrm{Hz}$ sent from the PC as the input source to the FPGA through the IIC configuration module. After the communication is established, the pixel information is divided into three 10-bit colour channels through the HDMI input and output. Such input and output requirements require us to add a codec conversion module between the input and output of the 10-bit colour channels and the three 8-bit RGB channels. The eight-bit RGB data obtained through decoding is input into the algorithm module that contains preprocessing and interpolation to complete the image to achieve the scaling function, and finally display the frame on the monitor through HDMI. The data cache part of the system needs to cache three frames of scaled image data, and the DDR3 module we use selects 16-bit input, so before inputting into the cache module, it is necessary to convert the three channels of 24-bit colour data into 16-bit yCbCr format, and carry out the yuv444 to yuv422 conversion to reduce the space required for storing the data, while retaining the good quality of the video pixel points. The space required for storage is reduced while retaining the good quality of the video pixels.
 
 Based on the basic engineering of scaling, we use an Elinks RISC-V Sapphire SoC to receive user control information from the PC host. We configured the IP Sapphire SoC softcore to operate at 50MHz and enabled its UARTs and corresponding interrupts, while leaving the rest of the components at default. In more detail, the host computer sends a string of data to the Ti60F225, and the RISC-V softcore receives the data, decodes the corresponding video parameters, and writes the obtained parameters to the corresponding locations in the DDR. Whenever the frame synchronisation signal comes, the algorithm part will read the video parameters stored in the DDR and adjust the input and output of the algorithm accordingly. The parameters decoded by the UART are converted into control signals for specific algorithms and modes to guide the video streaming output of the system.
 
@@ -145,7 +145,7 @@ Based on the basic engineering of scaling, we use an Elinks RISC-V Sapphire SoC 
 
 ##### 2.2.1 hdmi_rx/ hdmi_tx module
 
-![](Document/images/dvi_decoder.jpg)
+![](Document/images/DVI_decoder.jpg)
 <div style="text-align: center;">Figure 2. DVI Decoder Schematic</div>
 
 At the moment of power-on, the computer reads the EDID data structure stored in the ROM of the Ti60F225 through the DDC channel of the HDMI via the IIC protocol, so as to obtain the reception capability and reception characteristics of the Ti60F225: such as the screen resolution, frame rate, and colour settings, etc. The computer sends the video stream with the corresponding resolution in hmdi timing sequence. The computer sends the video stream to the Ti60F225 in the hmdi timing sequence corresponding to the resolution. hmdi is used for the video streaming to the Ti60F225.
@@ -173,7 +173,7 @@ In order to facilitate the use of our products, we have made a beautiful and eas
 ![](Document/images/GUI.jpg)
 <div style="text-align: center;">Figure 5. Select via radio or drop-down menu bar</div>
 
-After selecting one of the zoom-in or zoom-out modes, the parameter selection related to the other function will become dark grey and you cannot input or drag the slider bar; for the selected mode, you can drag the slider bar arbitrarily to select the pixel coordinates or the reduced resolution value, as shown in Fig. The displayed video stream will be zoomed to $1920^{*}1080$ by cutting out the upper-left quarter of the image from the resolution; the upper-left quarter will be zoomed to $1920^{*}1080$; and the remaining part of the display will be filled with black pixel dots. ^{*}1080$; zoom out from $1920^{*}1080$ to $800^{*}600$ and fill the empty part of the display with black pixels.
+After selecting one of the zoom-in or zoom-out modes, the parameter selection related to the other function will become dark grey and you cannot input or drag the slider bar; for the selected mode, you can drag the slider bar arbitrarily to select the pixel coordinates or the reduced resolution value, as shown in Fig. The displayed video stream will be zoomed to 1920*1080 by cutting out the upper-left quarter of the image from the resolution; the upper-left quarter will be zoomed to 1920*1080; and the remaining part of the display will be filled with black pixel dots. zoom out from 1920*1080 to 800*600 and fill the empty part of the display with black pixels.
 
 ### Part III Completion and Performance Parameters
 
@@ -187,16 +187,16 @@ Enlargement: Here, we set the setting to cut out the middle 1/2 part of each fra
 ![](Document/images/NearestNeighbor2x.jpg)
 <div style="text-align: center;">Figure 7. Nearest Neighbour Algorithm Simulation Result Plot</div>
 
-A colour bar video streaming module ($\phantom{0}{.480^{*}272}\,$) is exemplified before the algorithm module to mimic the video stream passed to the algorithm by the pc. Firstly, the video stream passes through the image cutter module, which cuts out each frame of the original video stream from the pc to the part that the user wants to zoom in. From the simulation results, we can see that the image cutting module (de_o, vs_o, rgb_o) correctly cuts out the part that the user wants to zoom in from the original images (hs_i, vs_i, de_i, rgb_i).
+A colour bar video streaming module (480*272) is exemplified before the algorithm module to mimic the video stream passed to the algorithm by the pc. Firstly, the video stream passes through the image cutter module, which cuts out each frame of the original video stream from the pc to the part that the user wants to zoom in. From the simulation results, we can see that the image cutting module (de_o, vs_o, rgb_o) correctly cuts out the part that the user wants to zoom in from the original images (hs_i, vs_i, de_i, rgb_i).
 
 The scaling algorithm module contains three dual-port RAMs to access the stored video pixel data. From the simulation image, it can be seen that when the algorithm module has correctly hosted two lines of image data, the module will calculate the image data that should be output. Since the algorithm is simply set to expand the input image by a factor of two, the algorithm outputs two rows of pixels for every row of image data accessed after reading two rows of data from the beginning. (Here the algorithm uses 2x clock)
 
-To show the simulation result of zooming in at an arbitrary scale: $159^{*}146\rightharpoonup480^{*}272$.
+To show the simulation result of zooming in at an arbitrary scale: 159*146->480*272.
 
 ![](Document/images/arbitrary_scaling_up.jpg)
 <div style="text-align: center;">Figure 8. Arbitrary scale enlargement of the simulation results</div>
 
-展示任意比例缩小：  $480^{*}272\rightharpoonup253^{*}123$
+Demonstrate arbitrary scaling down: 480*272->253*123
 
 ![](Document/images/arbitrary_scaling_down.jpg)
 <div style="text-align: center;">Figure 9. Arbitrarily scaled down simulation results</div>
@@ -209,7 +209,7 @@ Our algorithm supports a wide range of resolution from image scaling, considerin
 
 #### 3.3 Actual Waveform Demonstration
 
-The result of zooming the centre area to $1920^{*}1080$ resolution signal grabbing is shown in Figure 10:
+The result of zooming the centre area to 1920*1080 resolution signal grabbing is shown in Figure 10:
 
 ![](Document/images/actual_waveforms.jpg)
 <div style="text-align: center;">Figure 10. The actual pulling of the data output from the algorithm and the data_valid waveforms</div>
@@ -219,7 +219,7 @@ The result of zooming the centre area to $1920^{*}1080$ resolution signal grabbi
 ![](Document/images/platform.png)
 <div style="text-align: center;">Figure 11. Actual display platform construction</div>
 
-We use the Efinity EDA tool as the development environment for verification and demonstration on the FPGA chip Ti60F225. The overall platform is shown in Figure 11, including the FPGA development board, PC input source, monitor, JTAG downloader, HDMI cable and power cable, etc. The FPGA outputs the input source image to the monitor after filtering and interpolation through engineering algorithms. For the zoom-out mode, we choose to zoom out from $1920^{*}1080$ to $1800^{*}950$ and $960^{*}950$; for the zoom-in mode, we firstly choose the central area of the screen, i.e., the area of $960^{*}540$ with the coordinates of the start point (280, 1440) and the end point (270, 810), and zoom in to the full-screen of the monitor $1920^{*}1080$. 1920^{*}1080$. To show that we can zoom in and out arbitrarily, we randomly select a rectangular area of $1272^{*}0737$ with the start point at the far point and zoom in to the full screen. As shown in Figure. 20, Figure. 21, Figure. 22, Figure 15., the result is ideal, the image edges are clear without jaggedness and blurring, there is almost no delay and no lag, and the colour channels are displayed normally.
+We use the Efinity EDA tool as the development environment for verification and demonstration on the FPGA chip Ti60F225. The overall platform is shown in Figure 11, including the FPGA development board, PC input source, monitor, JTAG downloader, HDMI cable and power cable, etc. The FPGA outputs the input source image to the monitor after filtering and interpolation through engineering algorithms. For the zoom-out mode, we choose to zoom out from 1920*1080 to 1800*950 and 960*950; for the zoom-in mode, we firstly choose the central area of the screen, i.e., the area of 960*540 with the coordinates of the start point (280, 1440) and the end point (270, 810), and zoom in to the full-screen of the monitor 1920*1080. 1920*1080$. To show that we can zoom in and out arbitrarily, we randomly select a rectangular area of 1272*0737 with the start point at the far point and zoom in to the full screen. As shown in Figure. 20, Figure. 21, Figure. 22, Figure 15., the result is ideal, the image edges are clear without jaggedness and blurring, there is almost no delay and no lag, and the colour channels are displayed normally.
 
 ![](Document/images/1920x1080-1800x950.jpg)
 <div style="text-align: center;">Figure 12. 1920*1080 -> 1800*950</div>
@@ -233,7 +233,7 @@ We use the Efinity EDA tool as the development environment for verification and 
 ![](Document/images/1272x737-1920x1080.jpg)
 <div style="text-align: center;">Figure 15. 1272*737->1920*1080</div>
 
-#### 3.5 资源利用
+#### 3.5 Resource utilisation
 
 ![](Document/images/overall_RTL.jpg)
 <div style="text-align: center;">Figure 16. Overall system RTL diagram</div>
@@ -247,7 +247,7 @@ We use the Efinity EDA tool as the development environment for verification and 
 ![](Document/images/resource3.jpg)
 <div style="text-align: center;">Figure 19. Overall resourcing</div>
 
-As can be seen in Figure 18, both Memory Blocks and DSP Blocks take up a small amount of $32.42\%$ and $18.12\%$ respectively, proving the effectiveness of the algorithm when the real-time scaling effect is fully realised. From the overall engineering report, we can see that the clock frequency allocation was maximised to $100\%$. These documented reports provide important data support for our team to improve the project and help us to continuously plan and optimise the project to avoid excessive idle resources or resource bottlenecks.
+As can be seen in Figure 18, both Memory Blocks and DSP Blocks take up a small amount of 32.42 and 18.12 respectively, proving the effectiveness of the algorithm when the real-time scaling effect is fully realised. From the overall engineering report, we can see that the clock frequency allocation was maximised to 100. These documented reports provide important data support for our team to improve the project and help us to continuously plan and optimise the project to avoid excessive idle resources or resource bottlenecks.
 
 #### 3.6 Subjective and objective performance metrics assessment
 
