@@ -134,8 +134,8 @@ Resource Utilisation: Fully utilise the performance and resources of FPGA hardwa
 
 The overall system block diagram of our video streaming scaler is shown below:
 
-![](Document/images/block_diagram.jpg)
-<div style="text-align: center;">Figure 1. Overall Block Diagram of the System</div>
+<p align="center"><img src="Document/images/block_diagram.jpg" alt="spi_simulation"></p>
+<p align="center">Figure 1. Overall Block Diagram of the System</div>
 
 According to the design purpose, our video streaming scaling system needs to achieve three basic requirements: low latency, high picture quality and arbitrary scaling effect. For a complete frame transmission process, the initial image resolution information is 1920*1080 and 60Hz sent from the PC as the input source to the FPGA through the IIC configuration module. After the communication is established, the pixel information is divided into three 10-bit colour channels through the HDMI input and output. Such input and output requirements require us to add a codec conversion module between the input and output of the 10-bit colour channels and the three 8-bit RGB channels. The eight-bit RGB data obtained through decoding is input into the algorithm module that contains preprocessing and interpolation to complete the image to achieve the scaling function, and finally display the frame on the monitor through HDMI. The data cache part of the system needs to cache three frames of scaled image data, and the DDR3 module we use selects 16-bit input, so before inputting into the cache module, it is necessary to convert the three channels of 24-bit colour data into 16-bit yCbCr format, and carry out the yuv444 to yuv422 conversion to reduce the space required for storing the data, while retaining the good quality of the video pixel points. The space required for storage is reduced while retaining the good quality of the video pixels.
 
@@ -145,8 +145,8 @@ Based on the basic engineering of scaling, we use an Elinks RISC-V Sapphire SoC 
 
 ##### 2.2.1 hdmi_rx/ hdmi_tx module
 
-![](Document/images/DVI_decoder.jpg)
-<div style="text-align: center;">Figure 2. DVI Decoder Schematic</div>
+<p align="center"><img src="Document/images/DVI_decoder.jpg" alt="spi_simulation"></p>
+<p align="center">Figure 2. DVI Decoder Schematic</p>
 
 At the moment of power-on, the computer reads the EDID data structure stored in the ROM of the Ti60F225 through the DDC channel of the HDMI via the IIC protocol, so as to obtain the reception capability and reception characteristics of the Ti60F225: such as the screen resolution, frame rate, and colour settings, etc. The computer sends the video stream with the corresponding resolution in hmdi timing sequence. The computer sends the video stream to the Ti60F225 in the hmdi timing sequence corresponding to the resolution. hmdi is used for the video streaming to the Ti60F225.
 
@@ -154,15 +154,15 @@ After the hdmi_rx module receives the streaming video data, the DVI decoder dete
 
 ##### 2.2.2 algorithm module
 
-![](Document/images/algorithm_module.jpg)
-<div style="text-align: center;">Figure 3. Block diagram of the algorithmic part of the module</div>
+<p align="center"><img src="Document/images/algorithm_module.jpg" alt="spi_simulation"></p>
+<p align="center">Figure 3. Block diagram of the algorithmic part of the module</p>
 
 In the frame image scaling algorithm section, the first step is to get the zoom-in and zoom-out mode selection through the serial port data. If it is zoom-in mode, the user-specified part of the input source video image is intercepted (the range of cutting is determined by the horizontal and vertical coordinates of the start and end points), which is realised by the execution of the original frame cutting module; if it is zoom-out mode, the input source video image is scaled down to the size of the output resolution specified by the user. Considering the need to read two lines of data and write one line of data in the algorithm, we use asynchronous read and write FIFOs using different clock frequencies to complete. Through the user's choice, the algorithm implementation module specifically selects the nearest neighbour or bilinear interpolation to achieve the specific function and before and after the implementation of the algorithm, the image data input and output are used to reduce the interference of noise signals filtering module [3]. In the implementation of the reduction algorithm, the reduced input image will be displayed in the upper left corner of the HDMI display, so the blanking module will be used to display the empty part of the screen in black to prevent the phenomenon of splash screen. Through the use of joining filter module and not join the filter module of the project using the colour bar COLOR ___ BAR simulation comparison, the lack of filter module, view the simulation results in the pixel data values, found in each line of data there will be part of the real data data inconsistent data such as non-ideal 0 value; on the board to verify that whether to join the filter module whether the significant practical effect, and concluded that if the filter module is added to the HDMI display, the blanking module will be displayed in black to prevent the emergence of flickering screen. It is concluded that if the filter module is missing, dozens of black dotted lines will appear in the output video stream image, and there are many irregularly arranged black dots or green noise in the adjacent dotted lines.
 
 ##### 2.2.3 frame buffer module
 
-![](Document/images/frame_buffer_module.jpg)
-<div style="text-align: center;"> Figure 4. Frame Buffer Module Block Diagram </div>
+<p align="center"><img src="Document/images/frame_buffer_module.jpg" alt="spi_simulation"></p>
+<p align="center"> Figure 4. Frame Buffer Module Block Diagram </p>
 
 In DDR3 write timing, the host sends address and control information to the write address channel, and then the host sends each write data to the write data channel. When the host sends the last data, the ‘LAST’ signal is pulled. After the device accepts all the data, there will be a write corresponding command signal sent back to indicate that the write transaction is complete.DDR3 read timing, when the address appears in the data bus, the transmitted data will appear in the read data channel, the device has been to keep the device data is invalid to know that the read data is valid. The processor may need to access the DDR3 memory to read or write data, and this access needs to be done through an efficient bus protocol - AXI (Advanced eXtensible Interface).AXI is a high-performance, high-bandwidth bus protocol for connecting and communicating with various hardware components in a digital system. connecting and communicating various hardware components in digital systems [4]. We call the Titanium series DDR3 IP core provided by Elinks to implement AXI4 full-speed mode and auto-calibration through the soft core (in our project, we can configure the configuration to see whether the self-calibration is successful or not by whether the LED is blinking or not, so that it is easy to check).
 
@@ -170,8 +170,8 @@ In DDR3 write timing, the host sends address and control information to the writ
 
 In order to facilitate the use of our products, we have made a beautiful and easy to use human-computer interface, the user can open the serial port transmission function after selecting the correct serial port and select the appropriate transmission baud rate and zoom in or out mode through the drop-down menu bar; by clicking on the corresponding algorithms in front of the hollow dot, as shown in the figure below:
 
-![](Document/images/GUI.jpg)
-<div style="text-align: center;">Figure 5. Select via radio or drop-down menu bar</div>
+<p align="center"><img src="Document/images/GUI.jpg" alt="spi_simulation"></p>
+<p align="center">Figure 5. Select via radio or drop-down menu bar</p>
 
 After selecting one of the zoom-in or zoom-out modes, the parameter selection related to the other function will become dark grey and you cannot input or drag the slider bar; for the selected mode, you can drag the slider bar arbitrarily to select the pixel coordinates or the reduced resolution value, as shown in Fig. The displayed video stream will be zoomed to 1920*1080 by cutting out the upper-left quarter of the image from the resolution; the upper-left quarter will be zoomed to 1920*1080; and the remaining part of the display will be filled with black pixel dots. zoom out from 1920*1080 to 800*600 and fill the empty part of the display with black pixels.
 
@@ -181,11 +181,11 @@ After selecting one of the zoom-in or zoom-out modes, the parameter selection re
 
 Enlargement: Here, we set the setting to cut out the middle 1/2 part of each frame of the video stream and enlarge the cut out image to twice of the original one.
 
-![](Document/images/Bilinear2x.jpg)
-<div style="text-align: center;">Figure 6. Simulation results of bilinear interpolation algorithm Fig.</div>
+<p align="center"><img src="Document/images/Bilinear2x.jpg" alt="spi_simulation"></p>
+<p align="center">Figure 6. Simulation results of bilinear interpolation algorithm Fig.</p>
 
-![](Document/images/NearestNeighbor2x.jpg)
-<div style="text-align: center;">Figure 7. Nearest Neighbour Algorithm Simulation Result Plot</div>
+<p align="center"><img src="Document/images/NearestNeighbor2x.jpg" alt="spi_simulation"></p>
+<p align="center">Figure 7. Nearest Neighbour Algorithm Simulation Result Plot</p>
 
 A colour bar video streaming module (480*272) is exemplified before the algorithm module to mimic the video stream passed to the algorithm by the pc. Firstly, the video stream passes through the image cutter module, which cuts out each frame of the original video stream from the pc to the part that the user wants to zoom in. From the simulation results, we can see that the image cutting module (de_o, vs_o, rgb_o) correctly cuts out the part that the user wants to zoom in from the original images (hs_i, vs_i, de_i, rgb_i).
 
@@ -193,13 +193,13 @@ The scaling algorithm module contains three dual-port RAMs to access the stored 
 
 To show the simulation result of zooming in at an arbitrary scale: 159*146->480*272.
 
-![](Document/images/arbitrary_scaling_up.jpg)
-<div style="text-align: center;">Figure 8. Arbitrary scale enlargement of the simulation results</div>
+<p align="center"><img src="Document/images/arbitrary_scaling_up.jpg" alt="spi_simulation"></p>
+<p align="center">Figure 8. Arbitrary scale enlargement of the simulation results</p>
 
 Demonstrate arbitrary scaling down: 480*272->253*123
 
-![](Document/images/arbitrary_scaling_down.jpg)
-<div style="text-align: center;">Figure 9. Arbitrarily scaled down simulation results</div>
+<p align="center"><img src="Document/images/arbitrary_scaling_down.jpg" alt="spi_simulation"></p>
+<p align="center">Figure 9. Arbitrarily scaled down simulation results</p>
 
 The simulation results show that the algorithm module supports any scale up to 2 times and any scale down.
 
@@ -211,41 +211,41 @@ Our algorithm supports a wide range of resolution from image scaling, considerin
 
 The result of zooming the centre area to 1920*1080 resolution signal grabbing is shown in Figure 10:
 
-![](Document/images/actual_waveforms.jpg)
-<div style="text-align: center;">Figure 10. The actual pulling of the data output from the algorithm and the data_valid waveforms</div>
+<p align="center"><img src="Document/images/actual_waveforms.jpg" alt="spi_simulation"></p>
+<p align="center">Figure 10. The actual pulling of the data output from the algorithm and the data_valid waveforms</p>
 
 #### 3.4 Platform building
 
-![](Document/images/platform.png)
-<div style="text-align: center;">Figure 11. Actual display platform construction</div>
+<p align="center"><img src="Document/images/platform.png" alt="spi_simulation"></p>
+<p align="center">Figure 11. Actual display platform construction</p>
 
 We use the Efinity EDA tool as the development environment for verification and demonstration on the FPGA chip Ti60F225. The overall platform is shown in Figure 11, including the FPGA development board, PC input source, monitor, JTAG downloader, HDMI cable and power cable, etc. The FPGA outputs the input source image to the monitor after filtering and interpolation through engineering algorithms. For the zoom-out mode, we choose to zoom out from 1920*1080 to 1800*950 and 960*950; for the zoom-in mode, we firstly choose the central area of the screen, i.e., the area of 960*540 with the coordinates of the start point (280, 1440) and the end point (270, 810), and zoom in to the full-screen of the monitor 1920*1080. 1920*1080. To show that we can zoom in and out arbitrarily, we randomly select a rectangular area of 1272*0737 with the start point at the far point and zoom in to the full screen. As shown in Figure. 20, Figure. 21, Figure. 22, Figure 15., the result is ideal, the image edges are clear without jaggedness and blurring, there is almost no delay and no lag, and the colour channels are displayed normally.
 
-![](Document/images/1920x1080-1800x950.jpg)
-<div style="text-align: center;">Figure 12. 1920*1080 -> 1800*950</div>
+<p align="center"><img src="Document/images/1920x1080-1800x950.jpg" alt="spi_simulation"></p>
+<p align="center">Figure 12. 1920*1080 -> 1800*950</p>
 
-![](Document/images/1920x1080-960x950.jpg)
-<div style="text-align: center;">Figure 13. 1920\*1080->960\*950</div>
+<p align="center"><img src="Document/images/1920x1080-960x950.jpg" alt="spi_simulation"></p>
+<p align="center">Figure 13. 1920\*1080->960\*950</p>
 
-![](Document/images/960x540-1920x1080.jpg)
-<div style="text-align: center;">Figure 14. Central area of the image  960*540->1920*1080</div>
+<p align="center"><img src="Document/images/960x540-1920x1080.jpg" alt="spi_simulation"></p>
+<p align="center">Figure 14. Central area of the image  960*540->1920*1080</p>
 
-![](Document/images/1272x737-1920x1080.jpg)
-<div style="text-align: center;">Figure 15. 1272*737->1920*1080</div>
+<p align="center"><img src="Document/images/1272x737-1920x1080.jpg" alt="spi_simulation"></p>
+<p align="center">Figure 15. 1272*737->1920*1080</p>
 
 #### 3.5 Resource utilisation
 
-![](Document/images/overall_RTL.jpg)
-<div style="text-align: center;">Figure 16. Overall system RTL diagram</div>
+<p align="center"><img src="Document/images/overall_RTL.jpg" alt="spi_simulation"></p>
+<p align="center">Figure 16. Overall system RTL diagram</p>
 
-![](Document/images/resource1.jpg)
-<div style="text-align: center;">Figure 17. RAM, register resource usage report</div>
+<p align="center"><img src="Document/images/resource1.jpg" alt="spi_simulation"></p>
+<p align="center">Figure 17. RAM, register resource usage report</p>
 
-![](Document/images/resource2.jpg)
-<div style="text-align: center;">Figure 18. Memory and IO Pin Resource Usage during Layout</div>
+<p align="center"><img src="Document/images/resource2.jpg" alt="spi_simulation"></p>
+<p align="center">Figure 18. Memory and IO Pin Resource Usage during Layout</p>
 
-![](Document/images/resource3.jpg)
-<div style="text-align: center;">Figure 19. Overall resourcing</div>
+<p align="center"><img src="Document/images/resource3.jpg" alt="spi_simulation"></p>
+<p align="center">Figure 19. Overall resourcing</p>
 
 As can be seen in Figure 18, both Memory Blocks and DSP Blocks take up a small amount of 32.42 and 18.12 respectively, proving the effectiveness of the algorithm when the real-time scaling effect is fully realised. From the overall engineering report, we can see that the clock frequency allocation was maximised to 100. These documented reports provide important data support for our team to improve the project and help us to continuously plan and optimise the project to avoid excessive idle resources or resource bottlenecks.
 
@@ -270,21 +270,29 @@ The difference in the results of different algorithms is compared by comparing t
 algorithms to the same resolution as the source image. The calculation script is included in the appendix, and the PSNR and MSE values can be obtained by specifying the path to the input source image and the resolution value after scaling.
 
 Calculated by taking the zoom demonstrated in the previous section as an example:
+
+<div align="center">
+
 | zoom ratio | nearest neighbour interpolation | bilinear interpolation |
 |----------|------------|------------|
 | 1/2      | 27.8       | 29.6       |
 | 1/4      | 22.9       | 22.3       |
 
+</div>
 
 Comparison of the tables shows that it is generally accepted that if the PSNR value is higher than 36, the human eye cannot distinguish the image differences, and if it is higher than 24, the image differences can be considered as negligible [1, 2]. It is concluded that both algorithms responded to the desired performance and the bilinear interpolation outperformed the nearest neighbour interpolation algorithm in the test.
 
 Qualitative Analysis
+
+<div align="center">
+
 | | Nearest Neighbour Interpolation | Bilinear Interpolation | Nearest Neighbour Interpolation (preprocessed) | Bilinear Interpolation (preprocessed) |
 |--------------------------|------------|------------|-------------------------|-------------------------|
 | Whether jaggedness is generated | Jaggedness is generated | No | No | No | No | No
 | Are object edges blurred | slightly blurred | slightly blurred | no | no |
 | Does a splash screen appear | No | No | No | No | No | No
 
+</div>
 
 ### Part IV Conclusion
 
@@ -331,13 +339,13 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 
 
-<!-- 联系我们 -->
-## 联系我们
+<!-- CONTACT -->
+## Contact
 
-MoonGrt - 1561145394@qq.com
-Deng XinYang -
-Hu JiaXiang -
-Project Link: [MoonGrt/VisionZoom](https://github.com/MoonGrt/VisionZoom)
+MoonGrt - 1561145394@qq.com  
+Deng XinYang -  
+Hu JiaXiang -  
+Project Link: [MoonGrt/VisionZoom](https://github.com/MoonGrt/VisionZoom)  
 
 <p align="right">(<a href="#top">top</a>)</p>
 
